@@ -1,0 +1,5 @@
+# Add your sidekiq pro/enterprise gem here:
+
+source "https://user:pass@gems.contribsys.com/" do
+  gem 'sidekiq-ent' / gem 'sidekiq-pro'
+end
