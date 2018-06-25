@@ -29,3 +29,10 @@ rescue LoadError => e
   p e
 end
 ```
+
+
+## Running the app
+
+`sidekiq -r ./config/boot.rb -C ./config/sidekiq.yml`
+
+Run: `irb` and call WorkflowWorker with a number of jobs like `WorkflowWorker.new(50).perform`

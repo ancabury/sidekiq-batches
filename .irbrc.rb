@@ -1,3 +1,3 @@
 require 'sidekiq'
 
-require_relative 'lib/sidekiq-batches'
+require_relative 'config/boot'

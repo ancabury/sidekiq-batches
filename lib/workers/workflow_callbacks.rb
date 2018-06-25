@@ -1,0 +1,58 @@
+class WorkflowCallbacks
+  def level1_finished(status, opts)
+    GenericLogger.log '==== Logic on LEVEL 1 finished ==== '
+    GenericLogger.log '==== Performing logic on LEVEL 2 ==== '
+    size = opts['size']
+    current = opts['current'] + 1
+    batch = Sidekiq::Batch.new(status.parent_bid)
+
+    batch.jobs do
+      level2_batch = Sidekiq::Batch.new
+      level2_batch.description = 'LEVEL 2 batch'
+      level2_batch.on(:complete, 'WorkflowCallbacks#level2_finished', size: size, current: current)
+
+      level2_batch.jobs do
+        GenericWorker.perform_async(current, 2)
+      end
+    end
+  end
+
+  def level2_finished(status, opts)
+    GenericLogger.log '==== Logic on LEVEL 2 finished ==== '
+    GenericLogger.log '==== Performing logic on LEVEL 3 ==== '
+    size = opts['size']
+    current = opts['current'] + 1
+    batch = Sidekiq::Batch.new(status.parent_bid)
+
+    batch.jobs do
+      level3_batch = Sidekiq::Batch.new
+      level3_batch.description = 'LEVEL 3 batch'
+      level3_batch.on(:complete, 'WorkflowCallbacks#level3_finished', size: size, current: 3*size/4)
+
+      level3_batch.jobs do
+        (current..(3*size/4)).each do |current|
+          GenericWorker.perform_async(current, 3)
+        end
+      end
+    end
+  end
+
+  def level3_finished(status, opts)
+    GenericLogger.log '==== Logic on LEVEL 3 finished ==== '
+    GenericLogger.log '==== Performing logic on LEVEL 4 ==== '
+    size = opts['size']
+    current = opts['current'] + 1
+    batch = Sidekiq::Batch.new(status.parent_bid)
+
+    batch.jobs do
+      (current..size).each  do |current|
+        GenericWorker.perform_async(current, 4)
+      end
+    end
+  end
+
+  def finished(status, opts)
+    GenericLogger.log '==== Logic on LEVEL 4 finished ==== '
+    GenericLogger.log '==== Execution finished ===='
+  end
+end
