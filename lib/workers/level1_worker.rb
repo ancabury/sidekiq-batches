@@ -3,7 +3,7 @@ class Level1Worker
   sidekiq_options queue: 'workers'
 
   def perform(size)
-    GenericLogger.log '==== Performing logic on LEVEL 1 ==== '
+    GenericLogger.log '==== Performing logic on LEVEL 1 ===='
     batch.jobs do
       level1_batch = Sidekiq::Batch.new
       level1_batch.description = 'LEVEL 1 batch'

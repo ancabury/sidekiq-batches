@@ -12,8 +12,8 @@ class WorkflowWorker
     batch.on(:complete, 'WorkflowCallbacks#finished')
 
     batch.jobs do
-      GenericLogger.log '==== Performing logic on LEVEL 0 ==== '
-      GenericLogger.log "==== Performing jobs on LEVEL 0, job: 0 ==== "
+      GenericLogger.log '==== Performing logic on LEVEL 0 ===='
+      GenericLogger.log '==== Performing jobs on LEVEL 0, job: 0 ===='
 
       Level1Worker.perform_async(@size - 1)
     end
